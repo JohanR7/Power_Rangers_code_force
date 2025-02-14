@@ -57,7 +57,7 @@
         left: 10%;
         width: 60%;
         height: 60%;
-        background: rgba(255, 255, 255, 0.1); /* Translucent container */
+        background: rgba(255, 255, 255, 0.1); 
         border: 2px rgba(255, 255, 255, 0.3) solid;
         border-radius: 50px;
         display: block;
@@ -171,7 +171,7 @@
 
       function panMap() {
         var center = map.getCenter();
-        map.panTo([center.lat, center.lng + 0.002]); // Slowly pan right
+        map.panTo([center.lat, center.lng + 0.002]); 
       }
 
       setInterval(panMap, 100);

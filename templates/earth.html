@@ -1,169 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mapbox Space Globe</title>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
-    <link
-      href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
-      rel="stylesheet"
-    />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl-geocoder/4.7.2/mapbox-gl-geocoder.min.js"></script>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl-geocoder/4.7.2/mapbox-gl-geocoder.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl-geocoder/4.7.2/mapbox-gl-geocoder.css" rel="stylesheet" />
     <style>
-      body, html {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        background: black;
-        overflow: hidden;
-      }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            overflow: hidden;
+        }
 
-      #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-      }
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
 
-      /* Confirmation Box */
-      #confirmation-container {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        display: none;
-      }
+        #confirmation-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
 
-      #confirmation-container button {
-        border: none;
-        padding: 10px 15px;
-        margin: 5px;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 16px;
-      }
+        #confirmation-container.visible {
+            opacity: 1;
+        }
 
-      #confirm-btn {
-        background: #4caf50;
-        color: white;
-      }
+        #confirmation-container button {
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
 
-      #confirm-btn:hover {
-        background: #45a049;
-      }
+        #confirm-btn {
+            background: #4caf50;
+            color: white;
+        }
 
-      #cancel-btn {
-        background: #f44336;
-        color: white;
-      }
+        #confirm-btn:hover {
+            background: #45a049;
+        }
 
-      #cancel-btn:hover {
-        background: #d32f2f;
-      }
+        #cancel-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        #cancel-btn:hover {
+            background: #d32f2f;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
+
     <div id="map"></div>
     <div id="confirmation-container">
-      <p>Confirm your location?</p>
-      <button id="confirm-btn">Confirm Location</button>
-      <button id="cancel-btn">Cancel</button>
+        <p>Confirm your location?</p>
+        <button id="confirm-btn">Confirm Location</button>
+        <button id="cancel-btn">Cancel</button>
     </div>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        mapboxgl.accessToken = "pk.eyJ1IjoieGdlbiIsImEiOiJjbTc0bXR3dTAwN2E1MmxzZm84cHM2anBjIn0.E0nesUoHeEr1ULLvjYi3Pw";
+        document.addEventListener("DOMContentLoaded", function () {
+            mapboxgl.accessToken = "pk.eyJ1IjoieGdlbiIsImEiOiJjbTc0bXR3dTAwN2E1MmxzZm84cHM2anBjIn0.E0nesUoHeEr1ULLvjYi3Pw";
 
-        const map = new mapboxgl.Map({
-          container: "map",
-          style: "mapbox://styles/mapbox/satellite-v9",
-          projection: "globe",
-          zoom: 2.5,
-          center: [-90, 0],
-        });
+            const map = new mapboxgl.Map({
+                container: "map",
+                style: "mapbox://styles/mapbox/satellite-v9",
+                projection: "globe",
+                zoom: 2.5,
+                center: [-90, 0],
+                renderWorldCopies: true,
+                maxPitch: 60,
+                minZoom: 1.5
+            });
 
-        map.on("style.load", () => {
-          map.setFog({
-            color: "rgba(0, 0, 0, 1)", // True black space
-            "high-color": "rgb(207, 192, 192)", // Subtle atmospheric light
-            "horizon-blend": 1, // Smooth horizon transition
-            "space-color": "rgba(0, 0, 0, 1)", // Deep space color
-            "star-intensity": 1, // Bright stars
-          });
-        });
+            map.on("style.load", () => {
+                map.setFog({
+                    color: "rgba(0, 0, 0, 1)",
+                    "high-color": "rgb(207, 192, 192)",
+                    "horizon-blend": 1,
+                    "space-color": "rgba(0, 0, 0, 1)",
+                    "star-intensity": 1
+                });
+            });
 
-        let data1 = localStorage.getItem("data1");
-        let data2 = localStorage.getItem("data2");
-        let marker;
+            let data1 = localStorage.getItem("data1");
+            let data2 = localStorage.getItem("data2");
+            let marker;
+            let animationFrameId;
+            let isTransitioning = false;
 
-        function spinGlobe(duration = 3000) {
-          let startTime = performance.now();
+            function easeInOutQuad(t) {
+                return t < 0.5 
+                    ? 2 * t * t 
+                    : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            }
 
-          function animate() {
-            let elapsedTime = performance.now() - startTime;
-            if (elapsedTime < duration) {
-              let center = map.getCenter();
-              center.lng += 40;
-              map.easeTo({ center, duration: 300 });
-              requestAnimationFrame(animate);
-            } else {
-              if (data1 && data2) {
+            function spinGlobe() {
+                const initialSpinDuration = 3000;
+                const spinSpeed = 160;
+                const startTime = performance.now();
+                let currentLng = map.getCenter().lng;
+
+                function update(currentTime) {
+                    if (isTransitioning) return;
+
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / initialSpinDuration, 1);
+
+                    if (progress < 1) {
+                        const easedProgress = easeInOutQuad(progress);
+                        const rotation = currentLng + (spinSpeed * easedProgress); 
+
+                        map.easeTo({
+                            center: [rotation, 0],
+                            duration: 0,
+                            essential: true
+                        });
+
+                        animationFrameId = requestAnimationFrame(update);
+                    } else {
+                        setTimeout(transitionToLocation, 200);
+                    }
+                }
+
+                animationFrameId = requestAnimationFrame(update);
+            }
+
+            function transitionToLocation() {
+                if (!data1 || !data2) return;
+                
+                isTransitioning = true;
                 const latitude = parseFloat(data1);
                 const longitude = parseFloat(data2);
-                setTimeout(() => {
-                  map.flyTo({
-                    center: [longitude, latitude],
-                    zoom: 12,
-                    duration: 2000,
-                    essential: true,
-                  });
+                
+                let currentLng = map.getCenter().lng % 360;
+                let targetLng = longitude % 360;
+                const diff = targetLng - currentLng;
+                
+                if (Math.abs(diff) > 180) {
+                    targetLng += diff > 0 ? -360 : 360;
+                }
 
-                  // Add a red marker at the coordinates (Draggable)
-                  marker = new mapboxgl.Marker({ color: "red", draggable: true })
+                map.flyTo({
+                    center: [targetLng, latitude],
+                    zoom: 15,
+                    duration: 5000,
+                    essential: true,
+                    curve: 1.2,
+                    speed: 0.8,
+                    bearing: 0,
+                    pitch: 0
+                });
+
+                setTimeout(() => {
+                    addMarker(longitude, latitude);
+                }, 4000); 
+            }
+
+            function addMarker(longitude, latitude) {
+                if (marker) marker.remove();
+
+                marker = new mapboxgl.Marker({ color: "red", draggable: true })
                     .setLngLat([longitude, latitude])
                     .addTo(map);
 
-                  setTimeout(() => {
-                    document.getElementById("confirmation-container").style.display = "block";
-                  }, 2000);
-
-                  // Update the marker position if dragged
-                  marker.on("dragend", () => {
+                marker.on("dragend", () => {
                     const newCoords = marker.getLngLat();
-                    console.log("Updated Location:", newCoords);
                     localStorage.setItem("data1", newCoords.lat);
                     localStorage.setItem("data2", newCoords.lng);
-                    map.flyTo({ center: [newCoords.lng, newCoords.lat], zoom: 12, duration: 1000 });
-                  });
+                    map.flyTo({
+                        center: [newCoords.lng, newCoords.lat],
+                        zoom: 12,
+                        duration: 1000,
+                        essential: true
+                    });
+                });
 
-                }, 1500);
-              }
+                const confirmationContainer = document.getElementById("confirmation-container");
+                confirmationContainer.style.display = "block";
+                setTimeout(() => {
+                    confirmationContainer.classList.add("visible");
+                }, 50);
             }
-          }
-          animate();
-        }
 
-        spinGlobe();
+            spinGlobe();
 
-        document.getElementById("confirm-btn").addEventListener("click", function () {
-          window.location.href = "/form/";
+            window.addEventListener("beforeunload", () => {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+            });
+
+            document.getElementById("confirm-btn").addEventListener("click", () => {
+                window.location.href = "/form/";
+            });
+
+            document.getElementById("cancel-btn").addEventListener("click", () => {
+                window.history.back();
+            });
         });
-
-        document.getElementById("cancel-btn").addEventListener("click", function () {
-          window.history.back();
-        });
-      });
     </script>
-  </body>
+</body>
 </html>

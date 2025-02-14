@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,32 +14,68 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: url("{% static background_image %}") no-repeat center center;
-            background-size: cover;
-            transition: background 1s ease-in-out;
+            background-color: black;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #backgroundImage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: -1;
         }
 
         .container {
             width: 400px;
             padding: 2rem;
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.1); /* Glass effect */
+            background: rgba(0, 0, 0, 0.4);;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
         }
 
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        h2, label {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
         input {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            color: black;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            box-sizing: border-box;
         }
 
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        input::placeholder {
+    font-weight: 400;
+}
         button {
             width: 100%;
             padding: 12px;
@@ -51,34 +86,92 @@
             border-radius: 10px;
             cursor: pointer;
             font-size: 1rem;
+            transition: background 0.3s ease;
         }
 
         button:hover {
             background: rgba(29, 78, 216, 0.8);
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
     </style>
 </head>
 <body>
+    <img id="backgroundImage" alt="background">
+    
     <div class="container">
         <h2>Building Data Form</h2>
         <form id="buildingForm">
-            <label for="footprint_width">Footprint Width (ft):</label>
-            <input type="number" id="footprint_width" required placeholder="Enter width">
+            <div class="form-group">
+                <label for="footprint_width">Footprint Width (ft):</label>
+                <input type="number" id="footprint_width" required placeholder="Enter width">
+            </div>
 
-            <label for="footprint_length">Footprint Length (ft):</label>
-            <input type="number" id="footprint_length" required placeholder="Enter length">
+            <div class="form-group">
+                <label for="footprint_length">Footprint Length (ft):</label>
+                <input type="number" id="footprint_length" required placeholder="Enter length">
+            </div>
 
-            <label for="floors">Number of Floors:</label>
-            <input type="number" id="floors" required placeholder="Enter floors">
+            <div class="form-group">
+                <label for="floors">Number of Floors:</label>
+                <input type="number" id="floors" required placeholder="Enter floors">
+            </div>
 
-            <label for="height">Building Height (ft):</label>
-            <input type="number" id="height" required placeholder="Enter height">
+            <div class="form-group">
+                <label for="height">Building Height (ft):</label>
+                <input type="number" id="height" required placeholder="Enter height">
+            </div>
 
             <button type="submit">Submit</button>
         </form>
     </div>
 
     <script>
+const basePath = window.location.origin + "/static/images/";  
+
+
+const backgroundImages = [
+    basePath + "1.jpeg",
+    basePath + "2.jpeg",
+    basePath + "3.jpeg",
+    basePath + "4.jpeg",
+    basePath + "5.jpeg",
+    basePath + "6.jpeg",
+];
+
+function handleImageError(imgElement) {
+    console.error('Failed to load image:', imgElement.src);
+    const nextIndex = (backgroundImages.indexOf(imgElement.src) + 1) % backgroundImages.length;
+    imgElement.src = backgroundImages[nextIndex];
+}
+
+function getRandomImage() {
+    return backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+}
+
+function changeBackground() {
+    const imgElement = document.getElementById('backgroundImage');
+    imgElement.style.opacity = '0';
+    
+    setTimeout(() => {
+        imgElement.src = getRandomImage();
+        imgElement.style.opacity = '1';
+    }, 1000);
+}
+
+window.addEventListener('load', () => {
+    const imgElement = document.getElementById('backgroundImage');
+    imgElement.onerror = () => handleImageError(imgElement);
+    imgElement.src = getRandomImage();
+    imgElement.style.opacity = '1';
+});
         document.getElementById("buildingForm").addEventListener("submit", function(event) {
             event.preventDefault();
 
@@ -92,6 +185,7 @@
             sessionStorage.setItem("simulationData", JSON.stringify(formData));
             window.location.href = "/analytics/";
         });
+
     </script>
 </body>
 </html>

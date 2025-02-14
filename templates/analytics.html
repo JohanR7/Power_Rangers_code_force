@@ -1,150 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Energy Efficiency Analytics</title>
-  <style>
-    :root {
-      --primary-color: #2563eb;
-      --primary-hover: #1d4ed8;
-      --bg-color: #f8fafc;
-      --card-bg: #ffffff;
-      --text-color: #1e293b;
-      --border-color: #e2e8f0;
-    }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      padding: 2rem;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: var(--card-bg);
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    #analytics {
-      margin-top: 1rem;
-      background: #e9ecef;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      white-space: pre-wrap;
-      font-family: monospace;
-    }
-    .error {
-      color: red;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Efficiency Analytics</title>
+    <style>
+        :root {
+            --primary-color: #60a5fa;
+            --secondary-color: #3b82f6;
+            --success-color: #34d399;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --border-color: #374151;
+            --highlight: #2563eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .card h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metrics-list, .suggestion-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .metrics-list li, .suggestion-list li {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+
+        .suggestion-category {
+            font-weight: bold;
+            color: var(--highlight);
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Energy Efficiency Analytics & Design Suggestions</h1>
-    <div id="analytics">Loading analytics and suggestions...</div>
-  </div>
-  
-  <script>
-    function computeAnalytics(data) {
-      const footprintWidth = parseFloat(data.footprint_width) || 0;
-      const footprintLength = parseFloat(data.footprint_length) || 0;
-      const floors = parseFloat(data.floors) || 1;
-      const height = parseFloat(data.height) || 0;
+    <div class="container">
+        <h1>Energy Efficiency Analytics & Design Suggestions</h1>
+        <div class="card">
+            <h2>Building Analytics</h2>
+            <ul id="analytics" class="metrics-list">Loading analytics...</ul>
+        </div>
+        <div class="card">
+            <h2>Design Suggestions</h2>
+            <ul id="suggestions" class="suggestion-list">Loading suggestions...</ul>
+        </div>
+    </div>
 
-      const floorArea = footprintWidth * footprintLength;
-      const totalArea = floorArea * floors;
-      const volume = totalArea * height;
-
-      const floorArea_m2 = floorArea * 0.092903;
-      const totalArea_m2 = totalArea * 0.092903;
-      const volume_m3 = volume * 0.0283168;
-
-      const coolingLoad_W = totalArea_m2 * 50;
-      const annualEnergyConsumption_kWh = totalArea_m2 * 20;
-
-      let analyticsReport = `Building Analytics:\n`;
-      analyticsReport += `- Floor Area per Floor: ${floorArea.toFixed(2)} ft² (${floorArea_m2.toFixed(2)} m²)\n`;
-      analyticsReport += `- Total Floor Area: ${totalArea.toFixed(2)} ft² (${totalArea_m2.toFixed(2)} m²)\n`;
-      analyticsReport += `- Building Volume: ${volume.toFixed(2)} ft³ (${volume_m3.toFixed(2)} m³)\n`;
-      analyticsReport += `- Estimated Cooling Load: ${coolingLoad_W.toFixed(0)} W\n`;
-      analyticsReport += `- Estimated Annual Energy Consumption: ${annualEnergyConsumption_kWh.toFixed(0)} kWh/year\n`;
-
-      let suggestions = `\nDesign Suggestions:\n`;
-      suggestions += coolingLoad_W > 10000
-        ? `- High cooling load detected; consider adding shading devices and increasing natural ventilation.\n`
-        : `- Cooling load is moderate; focus on optimizing HVAC system efficiency.\n`;
-      suggestions += annualEnergyConsumption_kWh > 20000
-        ? `- Annual energy consumption is high; evaluate insulation and material choices to reduce consumption.\n`
-        : `- Energy consumption is within a reasonable range; maintain current design standards.\n`;
-
-      return analyticsReport + suggestions;
-    }
-
-    async function getGeminiSuggestions(promptText) {
-      const apiKey = "AIzaSyAT0ySt05Me9yZNy6B32Iadax0wf_77PaM"; // API key should be handled on a secure backend
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-      const payload = {
-        "contents": [{
-          "parts": [{"text": promptText}]
-        }]
-      };
-
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
+    <script>
+        async function fetchAnalytics() {
+            const analyticsDiv = document.getElementById("analytics");
+            const suggestionsDiv = document.getElementById("suggestions");
+            
+            const simulationDataStr = sessionStorage.getItem("simulationData");
+            if (!simulationDataStr) {
+                analyticsDiv.innerHTML = "<li>No simulation data found.</li>";
+                return;
+            }
+            
+            const data = JSON.parse(simulationDataStr);
+            const floorArea = (data.footprint_width * data.footprint_length).toFixed(2);
+            const totalArea = (floorArea * data.floors).toFixed(2);
+            const volume = (totalArea * data.height).toFixed(2);
+            
+            analyticsDiv.innerHTML = `
+                <li>📏 <strong>Floor Area per Floor:</strong> ${floorArea} ft²</li>
+                <li>🏢 <strong>Total Floor Area:</strong> ${totalArea} ft²</li>
+                <li>📦 <strong>Building Volume:</strong> ${volume} ft³</li>
+            `;
+            
+            const promptText = `Building details: ${JSON.stringify(data)}. Suggest efficiency improvements.`;
+            const geminiSuggestions = await getGeminiSuggestions(promptText);
+            suggestionsDiv.innerHTML = geminiSuggestions;
         }
 
-        const data = await response.json();
-        console.log("Gemini API full response:", data);
+        async function getGeminiSuggestions(promptText) {
+            try {
+                const response = await fetch("/get_suggestions/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: promptText })
+                });
 
-        let geminiText = "No additional suggestions from Gemini.";
-        if (data.candidates && data.candidates.length > 0 && data.candidates[0].content.parts.length > 0) {
-          geminiText = data.candidates[0].content.parts[0].text || geminiText;
+                const data = await response.json();
+                console.log("Gemini API Response:", data);
+                const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No suggestions available.";
+                
+                return formatSuggestions(rawText);
+            } catch (error) {
+                console.error("Error fetching Gemini suggestions:", error);
+                return "<li>Error: " + error.message + "</li>";
+            }
         }
 
-        return geminiText;
-      } catch (error) {
-        console.error("Error fetching Gemini suggestions:", error);
-        return "Error: " + error.message;
-      }
-    }
+        function formatSuggestions(text) {
+            const lines = text.split("\n");
+            let formattedHTML = "";
+            
+            lines.forEach(line => {
+                if (line.includes("**")) {
+                    formattedHTML += `<li class='suggestion-category'>${line.replace(/\*\*/g, "").trim()}</li>`;
+                } else if (line.trim()) {
+                    formattedHTML += `<li>✅ ${line.trim()}</li>`;
+                }
+            });
+            
+            return formattedHTML;
+        }
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      const analyticsDiv = document.getElementById("analytics");
-
-      const simulationDataStr = sessionStorage.getItem("simulationData");
-      if (!simulationDataStr) {
-        analyticsDiv.innerHTML = "<p class='error'>No simulation data found. Please go back and submit the form.</p>";
-        return;
-      }
-
-      const simulationData = JSON.parse(simulationDataStr);
-      const analyticsReport = computeAnalytics(simulationData);
-      const geminiPrompt = `Based on the following building analytics and simulation data:\n${JSON.stringify(simulationData, null, 2)}\nAnalytics:\n${analyticsReport}\nProvide additional energy-efficient design suggestions in plain text.`;
-
-      const geminiSuggestions = await getGeminiSuggestions(geminiPrompt);
-      analyticsDiv.innerText = analyticsReport + "\n" + geminiSuggestions;
-    });
-  </script>
+        document.addEventListener("DOMContentLoaded", fetchAnalytics);
+    </script>
 </body>
 </html>
