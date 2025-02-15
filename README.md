@@ -13,4 +13,8 @@
    ```bash
    python manage.py runserver
    ```
-
+ 4.**Reapply Migrations**:
+```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
