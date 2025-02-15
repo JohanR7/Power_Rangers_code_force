@@ -95,85 +95,106 @@
     </div>
 
     <script>
-      async function fetchAnalytics() {
-        const analyticsDiv = document.getElementById("analytics");
-        const suggestionsDiv = document.getElementById("suggestions");
+async function fetchAnalytics() {
+    const analyticsDiv = document.getElementById("analytics");
+    const suggestionsDiv = document.getElementById("suggestions");
 
-        const simulationDataStr = sessionStorage.getItem("simulationData");
-        const locationDataStr = sessionStorage.getItem("locationData");
+    const simulationDataStr = sessionStorage.getItem("simulationData");
+    const locationDataStr = sessionStorage.getItem("locationData");
 
-        if (!simulationDataStr) {
-          analyticsDiv.innerHTML = "<li>No simulation data found.</li>";
-          return;
-        }
+    if (!simulationDataStr) {
+        analyticsDiv.innerHTML = "<li>No simulation data found.</li>";
+        return;
+    }
 
-        const data = JSON.parse(simulationDataStr);
-        const location = JSON.parse(locationDataStr);
+    const data = JSON.parse(simulationDataStr);
+    const location = JSON.parse(locationDataStr);
 
-        const floorArea = (
-          data.footprint_width * data.footprint_length
-        ).toFixed(2);
-        const totalArea = (floorArea * data.floors).toFixed(2);
-        const volume = (totalArea * data.height).toFixed(2);
+    const floorArea = (data.footprint_width * data.footprint_length).toFixed(2);
+    const totalArea = (floorArea * data.floors).toFixed(2);
+    const volume = (totalArea * data.height).toFixed(2);
 
-        analyticsDiv.innerHTML = `
-                <li>📏 <strong>Floor Area per Floor:</strong> ${floorArea} ft²</li>
-                <li>🏢 <strong>Total Floor Area:</strong> ${totalArea} ft²</li>
-                <li>📦 <strong>Building Volume:</strong> ${volume} ft³</li>
-            `;
+    analyticsDiv.innerHTML = `
+        <li>📏 <strong>Floor Area per Floor:</strong> ${floorArea} ft²</li>
+        <li>🏢 <strong>Total Floor Area:</strong> ${totalArea} ft²</li>
+        <li>📦 <strong>Building Volume:</strong> ${volume} ft³</li>
+    `;
 
-        const promptText = `Building details: ${JSON.stringify(
-          data
-        )}, Location details : ${JSON.stringify(
-          location
-        )}. You are an environmental architect with over 15 years of experience in designing sustainable buildings. Your expertise lies in identifying efficiency improvements that conserve energy and promote green building practices.
+    // Fetch Solar Radiation Data
+    const solarData = await fetchSolarRadiation(location.lat, location.lon)
+    const promptText = `Building details: ${JSON.stringify(data)}, 
+    Location details: ${JSON.stringify(location)}, 
+    Solar Radiation Data: ${JSON.stringify(solarData)}.
 
-Your task is to suggest efficiency improvements for a specified building project. The details are of building and location are provided above, using that data generate the result.
+    You are an environmental architect with over 15 years of experience in designing sustainable buildings. Your expertise lies in identifying efficiency improvements that conserve energy and promote green building practices.
+
+Your task is to suggest efficiency improvements for a specified building project. The details of the building and location are provided above; using that data, generate the result.
+
 Please provide five bullet points that outline strategies to conserve energy and modify the architecture to promote green building principles. Focus on practical and innovative solutions that can be implemented in the design and construction phases.
-(keep in mind that the response should only contain the 5 points- you can elaborate each points upto maybe around 100 word and also mention the significane of location in that point if needed, no other text should be involved in the response also instead of numbers add a random emoji in front of each of the points)`;
-        const geminiSuggestions = await getGeminiSuggestions(promptText);
-        suggestionsDiv.innerHTML = geminiSuggestions;
-      }
 
-      async function getGeminiSuggestions(promptText) {
-        try {
-          const response = await fetch("/get_suggestions/", {
+Keep in mind that the response should only contain the five points—no other text. Each point can be elaborated up to around 100 words, and you should mention the significance of the location when relevant. Also, instead of numbers, add a random emoji in front of each point.
+
+Additionally, include a point about integrating solar energy systems to harness renewable energy for the building)`;
+
+    const geminiSuggestions = await getGeminiSuggestions(promptText);
+    suggestionsDiv.innerHTML = geminiSuggestions;
+}
+
+// Function to fetch solar radiation data
+async function fetchSolarRadiation(lat, lon) {
+    const apiKey = 'f8410dfbe658d4e170ad603127bcb98a';
+    const url = `https://api.openweathermap.org/data/2.5/solar_radiation?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Failed to fetch solar radiation data: ${response.status}`);
+        const data = await response.json();
+        console.log('Solar Radiation Data:', data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching solar radiation data:", error);
+        return { error: error.message };
+    }
+}
+
+async function getGeminiSuggestions(promptText) {
+    try {
+        const response = await fetch("/get_suggestions/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: promptText }),
-          });
+        });
 
-          const data = await response.json();
-          console.log("Gemini API Response:", data);
-          const rawText =
+        const data = await response.json();
+        console.log("Gemini API Response:", data);
+        const rawText =
             data?.candidates?.[0]?.content?.parts?.[0]?.text ||
             "No suggestions available.";
 
-          return formatSuggestions(rawText);
-        } catch (error) {
-          console.error("Error fetching Gemini suggestions:", error);
-          return "<li>Error: " + error.message + "</li>";
-        }
-      }
+        return formatSuggestions(rawText);
+    } catch (error) {
+        console.error("Error fetching Gemini suggestions:", error);
+        return `<li>Error: ${error.message}</li>`;
+    }
+}
 
-      function formatSuggestions(text) {
-        const lines = text.split("\n");
-        let formattedHTML = "";
+function formatSuggestions(text) {
+    const lines = text.split("\n");
+    let formattedHTML = "";
 
-        lines.forEach((line) => {
-          if (line.includes("**")) {
-            formattedHTML += `<li class='suggestion-category'>${line
-              .replace(/\*\*/g, "")
-              .trim()}</li>`;
-          } else if (line.trim()) {
+    lines.forEach((line) => {
+        if (line.includes("**")) {
+            formattedHTML += `<li class='suggestion-category'>${line.replace(/\*\*/g, "").trim()}</li>`;
+        } else if (line.trim()) {
             formattedHTML += `<li>✅ ${line.trim()}</li>`;
-          }
-        });
+        }
+    });
 
-        return formattedHTML;
-      }
+    return formattedHTML;
+}
 
-      document.addEventListener("DOMContentLoaded", fetchAnalytics);
+document.addEventListener("DOMContentLoaded", fetchAnalytics);
+
     </script>
   </body>
 </html>
