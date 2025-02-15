@@ -1,3 +1,8 @@
+{% extends "base.html" %}
+
+{% block title %}Location - Green Design{% endblock %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,102 +20,117 @@
     />
 
     <style>
-body, html {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: "Crimson Text", serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #0b132b;
-  overflow: hidden;
-}
+      body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: "Crimson Text", serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #0b132b;
+        overflow: hidden;
+      }
 
-.form-container {
-  display: flex;
-  width: 90vw;
-  height: 90vh;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
+      .form-container {
+        display: flex;
+        width: 90vw;
+        height: 90vh;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
 
-.map-container {
-  flex: 1.5;
-  background: #1c2541;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+      .map-container {
+        flex: 3; /* Increased flex value to make the map bigger */
+        background: #1c2541;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-#map {
-  width: 100%;
-  height: 100%;
-}
+      #map {
+        width: 100%;
+        height: 100%;
+      }
 
-.form-section {
-  flex: 1;
-  background: #3a506b;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 30px;
-  color: white;
-}
+      .form-section {
+        flex: 1; /* Decreased flex value to make the form smaller */
+        background: #3a506b;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+        color: white;
+      }
 
-h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
-}
+      h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
 
-.input-group {
-  width: 100%;
-  margin-bottom: 15px;
-}
+      .input-group {
+        width: 100%;
+        margin-bottom: 15px;
+      }
 
-label {
-  font-size: 16px;
-  font-weight: 600;
-  display: block;
-  margin-bottom: 5px;
-}
+      /* Hide latitude, longitude, and next button initially */
+      #latitude-group,
+      #longitude-group,
+      #next-button {
+        display: none; /* Initially hidden */
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+      }
 
-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  outline: none;
-  background: #5bc0be;
-  color: black;
-  font-size: 16px;
-  box-sizing: border-box;
-}
+      /* Show latitude, longitude, and next button when visible */
+      #latitude-group.visible,
+      #longitude-group.visible,
+      #next-button.visible {
+        display: block;
+        opacity: 1;
+      }
 
-input::placeholder {
-  color: rgba(0, 0, 0, 0.6);
-}
+      label {
+        font-size: 16px;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 5px;
+      }
 
-button {
-  width: 100%;
-  padding: 12px;
-  background: #1c2541;
-  color: white;
-  font-size: 18px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
-}
+      input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        outline: none;
+        background: #5bc0be;
+        color: black;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
 
-button:hover {
-  background: #5bc0be;
-  color: black;
-}
+      input::placeholder {
+        color: rgba(0, 0, 0, 0.6);
+      }
 
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #1c2541;
+        color: white;
+        font-size: 18px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+      }
 
+      button:hover {
+        background: #5bc0be;
+        color: black;
+      }
     </style>
   </head>
   <body>
@@ -122,23 +142,27 @@ button:hover {
       <div class="form-section">
         <h2>Location Details</h2>
 
+        <!-- Location search input and button (always visible) -->
         <div class="input-group">
           <label for="place">Place Name:</label>
           <input type="text" id="place" placeholder="Enter a place name" />
           <button type="button" onclick="searchPlace()">Search</button>
         </div>
 
-        <div class="input-group">
+        <!-- Latitude input (hidden initially) -->
+        <div class="input-group" id="latitude-group">
           <label for="latitude">Latitude:</label>
           <input type="number" id="latitude" step="0.000001" required />
         </div>
 
-        <div class="input-group">
+        <!-- Longitude input (hidden initially) -->
+        <div class="input-group" id="longitude-group">
           <label for="longitude">Longitude:</label>
           <input type="number" id="longitude" step="0.000001" required />
         </div>
 
-        <button onclick="nextSection()">Next</button>
+        <!-- Next button (hidden initially) -->
+        <button id="next-button" onclick="nextSection()">Next</button>
       </div>
     </div>
 
@@ -169,6 +193,11 @@ button:hover {
 
               marker.setLatLng([lat, lon]);
               map.setView([lat, lon], 12);
+
+              // Show latitude, longitude inputs, and next button
+              document.getElementById("latitude-group").classList.add("visible");
+              document.getElementById("longitude-group").classList.add("visible");
+              document.getElementById("next-button").classList.add("visible");
             } else {
               alert("Place not found. Please enter manually.");
             }
@@ -190,8 +219,8 @@ button:hover {
         localStorage.setItem("data2", lon);
 
         window.location.href = "/earth/";
-
       }
     </script>
   </body>
 </html>
+{% endblock %}

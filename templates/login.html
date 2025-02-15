@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #818cf8;      
+            --primary-hover: #6366f1;      
+            --bg-color: #1e1e2e;           
+            --card-bg: #2a2b3d;            
+            --text-color: #e2e8f0;         
+            --text-muted: #94a3b8;         
+            --input-bg: #1e1e2e;           
+            --input-border: #383854;       
+            --input-focus: #818cf8;        
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2a2b3d 100%);
+            padding: 1rem;
+        }
+
+        .login-container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h2 {
+            color: var(--text-color);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header i {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.935rem;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 1rem;
+            top: 2.7rem;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid var(--input-border);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            opacity: 0.95;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            opacity: 1;
+        }
+
+        button i {
+            font-size: 1.25rem;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.935rem;
+        }
+
+        .signup-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+            color: var(--primary-hover);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .login-header i {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .login-container:hover {
+            box-shadow: 0 8px 32px rgba(129, 140, 248, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.935rem;
+        }
+
+        .alert-error {
+            background-color: #f44336; 
+            color: white;
+        }
+
+        .alert i {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <i class='bx bxs-user-circle'></i>
+            <h2>Welcome Back</h2>
+            <p>Please enter your credentials to access your account. If you don't have an account, you can sign up below.</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-error">
+                    <i class='bx bxs-error-circle'></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Username</label>
+                <i class='bx bxs-user'></i>
+                <input type="text" name="username" required placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <i class='bx bxs-lock-alt'></i>
+                <input type="password" name="password" required placeholder="Enter your password">
+            </div>
+            <button type="submit">
+                Login
+                <i class='bx bx-right-arrow-alt'></i>
+            </button>
+        </form>
+        <p class="signup-link">
+            Don't have an account? <a href="{% url 'signup' %}">Sign Up</a>
+        </p>
+    </div>
+</body>
+</html>

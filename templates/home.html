@@ -145,10 +145,16 @@
         </p>
         <br>
         <div class="sp">
-            <button class="sparkle-button" onclick="location.href='/location/'">Get Started</button>
+          {% if user.is_authenticated %}
+          <button class="sparkle-button" onclick="location.href='/location/'">Get Started</button>
+      {% else %}
+          <button class="sparkle-button" onclick="location.href='/login/'">Get Started</button>
+      {% endif %}
+      
         </div>
       </div>
     </div>
+
     <script>
       var map = L.map("map", {
         center: [9.92439, 76.32981],
