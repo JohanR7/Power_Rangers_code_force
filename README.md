@@ -14,9 +14,3 @@
    python manage.py runserver
    ```
 
-### Frontend (Angular)
-
-1. **Navigate to the frontend directory**:
-   ```bash
-   cd frontend
-   ```
