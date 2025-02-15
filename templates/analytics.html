@@ -1,158 +1,181 @@
-{% extends "base.html" %}
-
-{% block title %}Analytics - Green Design{% endblock %}
-
+{% extends "base.html" %} 
+{% block title %}Analytics - Green Design{% endblock%} 
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Energy Efficiency Analytics</title>
     <style>
-        :root {
-            --primary-color: #60a5fa;
-            --secondary-color: #3b82f6;
-            --success-color: #34d399;
-            --text-primary: #e5e7eb;
-            --text-secondary: #9ca3af;
-            --bg-dark: #111827;
-            --bg-card: #1f2937;
-            --border-color: #374151;
-            --highlight: #2563eb;
-        }
+      :root {
+        --primary-color: #60a5fa;
+        --secondary-color: #3b82f6;
+        --success-color: #34d399;
+        --text-primary: #e5e7eb;
+        --text-secondary: #9ca3af;
+        --bg-dark: #111827;
+        --bg-card: #1f2937;
+        --border-color: #374151;
+        --highlight: #2563eb;
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Arial, sans-serif;
+      }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
-            line-height: 1.6;
-            padding: 2rem;
-        }
+      body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+        line-height: 1.6;
+        padding: 2rem;
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
 
-        .card {
-            background: var(--bg-card);
-            border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
-        }
+      .card {
+        background: var(--bg-card);
+        border-radius: 8px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+      }
 
-        .card h2 {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
+      .card h2 {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
 
-        .metrics-list, .suggestion-list {
-            list-style: none;
-            padding-left: 0;
-        }
+      .metrics-list,
+      .suggestion-list {
+        list-style: none;
+        padding-left: 0;
+      }
 
-        .metrics-list li, .suggestion-list li {
-            margin-bottom: 1rem;
-            color: var(--text-secondary);
-            padding: 0.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-        }
+      .metrics-list li,
+      .suggestion-list li {
+        margin-bottom: 1rem;
+        color: var(--text-secondary);
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+      }
 
-        .suggestion-category {
-            font-weight: bold;
-            color: var(--highlight);
-            margin-top: 1.5rem;
-            font-size: 1.2rem;
-        }
+      .suggestion-category {
+        font-weight: bold;
+        color: var(--highlight);
+        margin-top: 1.5rem;
+        font-size: 1.2rem;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>Energy Efficiency Analytics & Design Suggestions</h1>
-        <div class="card">
-            <h2>Building Analytics</h2>
-            <ul id="analytics" class="metrics-list">Loading analytics...</ul>
-        </div>
-        <div class="card">
-            <h2>Design Suggestions</h2>
-            <ul id="suggestions" class="suggestion-list">Loading suggestions...</ul>
-        </div>
+      <h1>Energy Efficiency Analytics & Design Suggestions</h1>
+      <div class="card">
+        <h2>Building Analytics</h2>
+        <ul id="analytics" class="metrics-list">
+          Loading analytics...
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Design Suggestions</h2>
+        <ul id="suggestions" class="suggestion-list">
+          Loading suggestions...
+        </ul>
+      </div>
     </div>
 
     <script>
-        async function fetchAnalytics() {
-            const analyticsDiv = document.getElementById("analytics");
-            const suggestionsDiv = document.getElementById("suggestions");
-            
-            const simulationDataStr = sessionStorage.getItem("simulationData");
-            if (!simulationDataStr) {
-                analyticsDiv.innerHTML = "<li>No simulation data found.</li>";
-                return;
-            }
-            
-            const data = JSON.parse(simulationDataStr);
-            const floorArea = (data.footprint_width * data.footprint_length).toFixed(2);
-            const totalArea = (floorArea * data.floors).toFixed(2);
-            const volume = (totalArea * data.height).toFixed(2);
-            
-            analyticsDiv.innerHTML = `
+      async function fetchAnalytics() {
+        const analyticsDiv = document.getElementById("analytics");
+        const suggestionsDiv = document.getElementById("suggestions");
+
+        const simulationDataStr = sessionStorage.getItem("simulationData");
+        const locationDataStr = sessionStorage.getItem("locationData");
+
+        if (!simulationDataStr) {
+          analyticsDiv.innerHTML = "<li>No simulation data found.</li>";
+          return;
+        }
+
+        const data = JSON.parse(simulationDataStr);
+        const location = JSON.parse(locationDataStr);
+
+        const floorArea = (
+          data.footprint_width * data.footprint_length
+        ).toFixed(2);
+        const totalArea = (floorArea * data.floors).toFixed(2);
+        const volume = (totalArea * data.height).toFixed(2);
+
+        analyticsDiv.innerHTML = `
                 <li>📏 <strong>Floor Area per Floor:</strong> ${floorArea} ft²</li>
                 <li>🏢 <strong>Total Floor Area:</strong> ${totalArea} ft²</li>
                 <li>📦 <strong>Building Volume:</strong> ${volume} ft³</li>
             `;
-            
-            const promptText = `Building details: ${JSON.stringify(data)}. Suggest efficiency improvements.`;
-            const geminiSuggestions = await getGeminiSuggestions(promptText);
-            suggestionsDiv.innerHTML = geminiSuggestions;
+
+        const promptText = `Building details: ${JSON.stringify(
+          data
+        )}, Location details : ${JSON.stringify(
+          location
+        )}. You are an environmental architect with over 15 years of experience in designing sustainable buildings. Your expertise lies in identifying efficiency improvements that conserve energy and promote green building practices.
+
+Your task is to suggest efficiency improvements for a specified building project. The details are of building and location are provided above, using that data generate the result.
+Please provide five bullet points that outline strategies to conserve energy and modify the architecture to promote green building principles. Focus on practical and innovative solutions that can be implemented in the design and construction phases.
+(keep in mind that the response should only contain the 5 points- you can elaborate each points upto maybe around 100 word and also mention the significane of location in that point if needed, no other text should be involved in the response also instead of numbers add a random emoji in front of each of the points)`;
+        const geminiSuggestions = await getGeminiSuggestions(promptText);
+        suggestionsDiv.innerHTML = geminiSuggestions;
+      }
+
+      async function getGeminiSuggestions(promptText) {
+        try {
+          const response = await fetch("/get_suggestions/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: promptText }),
+          });
+
+          const data = await response.json();
+          console.log("Gemini API Response:", data);
+          const rawText =
+            data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+            "No suggestions available.";
+
+          return formatSuggestions(rawText);
+        } catch (error) {
+          console.error("Error fetching Gemini suggestions:", error);
+          return "<li>Error: " + error.message + "</li>";
         }
+      }
 
-        async function getGeminiSuggestions(promptText) {
-            try {
-                const response = await fetch("/get_suggestions/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt: promptText })
-                });
+      function formatSuggestions(text) {
+        const lines = text.split("\n");
+        let formattedHTML = "";
 
-                const data = await response.json();
-                console.log("Gemini API Response:", data);
-                const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No suggestions available.";
-                
-                return formatSuggestions(rawText);
-            } catch (error) {
-                console.error("Error fetching Gemini suggestions:", error);
-                return "<li>Error: " + error.message + "</li>";
-            }
-        }
+        lines.forEach((line) => {
+          if (line.includes("**")) {
+            formattedHTML += `<li class='suggestion-category'>${line
+              .replace(/\*\*/g, "")
+              .trim()}</li>`;
+          } else if (line.trim()) {
+            formattedHTML += `<li>✅ ${line.trim()}</li>`;
+          }
+        });
 
-        function formatSuggestions(text) {
-            const lines = text.split("\n");
-            let formattedHTML = "";
-            
-            lines.forEach(line => {
-                if (line.includes("**")) {
-                    formattedHTML += `<li class='suggestion-category'>${line.replace(/\*\*/g, "").trim()}</li>`;
-                } else if (line.trim()) {
-                    formattedHTML += `<li>✅ ${line.trim()}</li>`;
-                }
-            });
-            
-            return formattedHTML;
-        }
+        return formattedHTML;
+      }
 
-        document.addEventListener("DOMContentLoaded", fetchAnalytics);
+      document.addEventListener("DOMContentLoaded", fetchAnalytics);
     </script>
-</body>
+  </body>
 </html>
 
 {% endblock %}
