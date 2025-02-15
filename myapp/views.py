@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
+from django.conf import settings
 
 def home(request):
     return render(request, 'home.html')
@@ -73,7 +74,9 @@ def location(request):
     return render(request, "location.html")
 @login_required(login_url='login')
 def earth(request):
-    return render(request, "earth.html")
+    return render(request, "earth.html", {
+        "mapbox_access_token": settings.MAPBOX_ACCESS_TOKEN,
+    })
 @login_required(login_url='login')
 def form(request):
     if request.method == "POST":

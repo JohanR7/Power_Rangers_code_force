@@ -2,9 +2,11 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
+from decouple import config
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+MAPBOX_ACCESS_TOKEN = config("MAPBOX_ACCESS_TOKEN")
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-l=z^ff8fiszc@qt8h_ywam%dd)02p2h7)dlb5khx8b%y1jw2#y'
