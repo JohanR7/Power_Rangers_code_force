@@ -1,198 +1,263 @@
 {% extends "base.html" %}
 
-{% block title %}Form - Green Design{% endblock %}
+{% block title %}Location - Green Design{% endblock %}
 
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Building Data Form</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: black;
-            position: relative;
-            overflow: hidden;
-        }
+      body {
+        font-family: "Crimson Text", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: black;
+        position: relative;
+        overflow: hidden;
+      }
 
-        #backgroundImage {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-            z-index: -1;
-        }
+      #backgroundImage {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        z-index: -1;
+      }
 
-        .container {
-            width: 400px;
-            padding: 2rem;
-            border-radius: 20px;
-            background: rgba(0, 0, 0, 0.4);;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            color: white;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
+      .container {
+        width: 400px;
+        padding: 2rem;
+        border-radius: 20px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        color: white;
+        position: relative;
+        z-index: 1;
+      }
 
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        h2, label {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            box-sizing: border-box;
-        }
+      .form-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+      }
 
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        input::placeholder {
-    font-weight: 400;
-}
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 1rem;
-            background: rgba(37, 99, 235, 0.8);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s ease;
-        }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      h2,
+      label {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        box-sizing: border-box;
+      }
 
-        button:hover {
-            background: rgba(29, 78, 216, 0.8);
-        }
+      input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+      input::placeholder {
+        font-weight: 400;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 1rem;
+        background: rgba(37, 99, 235, 0.8);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+      }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+      button:hover {
+        background: rgba(29, 78, 216, 0.8);
+      }
 
-        .container {
-            animation: fadeIn 0.8s ease-out forwards;
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .container {
+        animation: fadeIn 0.8s ease-out forwards;
+      }
     </style>
-</head>
-<body>
-    <img id="backgroundImage" alt="background">
-    
+  </head>
+  <body>
+    <img id="backgroundImage" alt="background" />
+
     <div class="container">
-        <h2>Building Data Form</h2>
-        <form id="buildingForm">
-            <div class="form-group">
-                <label for="footprint_width">Footprint Width (ft):</label>
-                <input type="number" id="footprint_width" required placeholder="Enter width">
-            </div>
+      <h2>Building Data Form</h2>
+      <form id="buildingForm">
+        <div class="form-group">
+          <label for="footprint_width">Footprint Width (ft):</label>
+          <input
+            type="number"
+            id="footprint_width"
+            required
+            placeholder="Enter width"
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="footprint_length">Footprint Length (ft):</label>
-                <input type="number" id="footprint_length" required placeholder="Enter length">
-            </div>
+        <div class="form-group">
+          <label for="footprint_length">Footprint Length (ft):</label>
+          <input
+            type="number"
+            id="footprint_length"
+            required
+            placeholder="Enter length"
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="floors">Number of Floors:</label>
-                <input type="number" id="floors" required placeholder="Enter floors">
-            </div>
+        <div class="form-group">
+          <label for="floors">Number of Floors:</label>
+          <input
+            type="number"
+            id="floors"
+            required
+            placeholder="Enter floors"
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="height">Building Height (ft):</label>
-                <input type="number" id="height" required placeholder="Enter height">
-            </div>
+        <div class="form-group">
+          <label for="height">Building Height (ft):</label>
+          <input
+            type="number"
+            id="height"
+            required
+            placeholder="Enter height"
+          />
+        </div>
 
-            <button type="submit">Submit</button>
-        </form>
+        <button type="submit">Submit</button>
+      </form>
     </div>
 
     <script>
-const basePath = window.location.origin + "/static/images/";  
+      const basePath = window.location.origin + "/static/images/";
 
+      const backgroundImages = [
+        basePath + "1.jpeg",
+        basePath + "2.jpeg",
+        basePath + "3.jpeg",
+        basePath + "4.jpeg",
+        basePath + "5.jpeg",
+        basePath + "6.jpeg",
+      ];
 
-const backgroundImages = [
-    basePath + "1.jpeg",
-    basePath + "2.jpeg",
-    basePath + "3.jpeg",
-    basePath + "4.jpeg",
-    basePath + "5.jpeg",
-    basePath + "6.jpeg",
-];
+      function handleImageError(imgElement) {
+        console.error("Failed to load image:", imgElement.src);
+        const nextIndex =
+          (backgroundImages.indexOf(imgElement.src) + 1) %
+          backgroundImages.length;
+        imgElement.src = backgroundImages[nextIndex];
+      }
 
-function handleImageError(imgElement) {
-    console.error('Failed to load image:', imgElement.src);
-    const nextIndex = (backgroundImages.indexOf(imgElement.src) + 1) % backgroundImages.length;
-    imgElement.src = backgroundImages[nextIndex];
-}
+      function getRandomImage() {
+        return backgroundImages[
+          Math.floor(Math.random() * backgroundImages.length)
+        ];
+      }
 
-function getRandomImage() {
-    return backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
-}
+      function changeBackground() {
+        const imgElement = document.getElementById("backgroundImage");
+        imgElement.style.opacity = "0";
 
-function changeBackground() {
-    const imgElement = document.getElementById('backgroundImage');
-    imgElement.style.opacity = '0';
-    
-    setTimeout(() => {
+        setTimeout(() => {
+          imgElement.src = getRandomImage();
+          imgElement.style.opacity = "1";
+        }, 1000);
+      }
+
+      window.addEventListener("load", () => {
+        const imgElement = document.getElementById("backgroundImage");
+        imgElement.onerror = () => handleImageError(imgElement);
         imgElement.src = getRandomImage();
-        imgElement.style.opacity = '1';
-    }, 1000);
-}
+        imgElement.style.opacity = "1";
 
-window.addEventListener('load', () => {
-    const imgElement = document.getElementById('backgroundImage');
-    imgElement.onerror = () => handleImageError(imgElement);
-    imgElement.src = getRandomImage();
-    imgElement.style.opacity = '1';
-});
-        document.getElementById("buildingForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+        // Fetch weather data after loading
+        fetchWeatherData();
+      });
 
-            const formData = {
-                footprint_width: document.getElementById("footprint_width").value,
-                footprint_length: document.getElementById("footprint_length").value,
-                floors: document.getElementById("floors").value,
-                height: document.getElementById("height").value
-            };
+      async function fetchWeatherData() {
+        const lat = localStorage.getItem("data1");
+        const lon = localStorage.getItem("data2");
 
-            sessionStorage.setItem("simulationData", JSON.stringify(formData));
-            window.location.href = "/analytics/";
+        if (!lat || !lon) {
+          console.warn("Latitude or Longitude not found in localStorage.");
+          return;
+        }
+
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+
+          // Save weather data to sessionStorage
+          sessionStorage.setItem("locationData", JSON.stringify(data));
+
+          console.log(
+            "Weather data fetched and stored in sessionStorage:",
+            data
+          );
+        } catch (error) {
+          console.error("Error fetching weather data:", error);
+        }
+      }
+
+      document
+        .getElementById("buildingForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const formData = {
+            footprint_width: document.getElementById("footprint_width").value,
+            footprint_length: document.getElementById("footprint_length").value,
+            floors: document.getElementById("floors").value,
+            height: document.getElementById("height").value,
+          };
+
+          sessionStorage.setItem("simulationData", JSON.stringify(formData));
+          window.location.href = "/analytics/";
         });
-
     </script>
-</body>
+  </body>
 </html>
 
 {% endblock %}
